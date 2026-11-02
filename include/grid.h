@@ -19,3 +19,22 @@ bool initialize_grid(
 );
 
 void free_grid(Grid* grid);
+
+bool get_cell(
+    const Grid* grid,
+    int64_t x,
+    int64_t y,
+    uint64_t* value);
+
+bool set_cell(
+    Grid* grid,
+    int64_t x,
+    int64_t y,
+    uint64_t value);
+
+bool expand_grid(
+    Grid* grid,
+    int64_t new_min_x,
+    int64_t new_min_y,
+    uint64_t new_width,
+    uint64_t new_height);
