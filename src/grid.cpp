@@ -1,6 +1,6 @@
-#include <iostream>
-#include <grid.h>
+#include "grid.h"
 #include <new>
+#include <limits>
 
 bool initialize_grid(Grid* grid, uint64_t width, uint64_t height, int64_t min_x, int64_t min_y) {
     if (grid == nullptr) {
@@ -11,11 +11,6 @@ bool initialize_grid(Grid* grid, uint64_t width, uint64_t height, int64_t min_x,
         return false;
     }
 
-    grid->width = width;
-    grid->height = height;
-    grid->min_x = min_x;
-    grid->min_y = min_y;
-
     uint64_t grid_size = width * height;
     try {
         grid->cells = new uint64_t[grid_size]{};
@@ -23,6 +18,12 @@ bool initialize_grid(Grid* grid, uint64_t width, uint64_t height, int64_t min_x,
     catch (const std::bad_alloc& e) {
         return false;
     }
+
+    grid->width = width;
+    grid->height = height;
+    grid->min_x = min_x;
+    grid->min_y = min_y;
+
     return true;
 }
 
