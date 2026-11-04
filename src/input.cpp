@@ -10,8 +10,8 @@ bool read_input(const char* filename, Grid* grid) {
         return false;
     }
 
-    int64_t x;
-    int64_t y;
+    int16_t x;
+    int16_t y;
     uint64_t sand_count;
     bool has_data = false;
 
@@ -63,9 +63,6 @@ bool read_input(const char* filename, Grid* grid) {
     //Заполняем сетку
     has_data = false;
     while (file >> x >> y >> sand_count) {
-        if (!has_data) {
-            has_data = true;
-        }
         if (!set_cell(grid, x, y, sand_count)) {
             free_grid(grid);
             return false;
