@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(SandPile)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_executable(SandPile
+    src/main.cpp
+    src/grid.cpp
+    src/simulation.cpp
+    src/input.cpp
+    src/output.cpp
+    src/parce.cpp
+)
+
+target_include_directories(SandPile PRIVATE include)

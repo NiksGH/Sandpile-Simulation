@@ -14,8 +14,4 @@ struct Arguments {
 
 bool equal(const char* s1, const char* s2);
 
-bool parse_arguments(
-    int argc,
-    char* argv[],
-    Arguments* args
-);
+bool parse_arguments(int argc, char* argv[], Arguments* args);

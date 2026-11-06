@@ -241,35 +241,35 @@ bool is_stable(const Grid* grid) {
     return true;
 }
 
-bool simulate(Grid* grid, const uint64_t* max_iter) {
-    if (grid == nullptr || grid->cells == nullptr) {
-        return false;
-    }
+// bool simulate(Grid* grid, const uint64_t* max_iter) {
+//     if (grid == nullptr || grid->cells == nullptr) {
+//         return false;
+//     }
 
-    if (is_stable(grid)) {
-        return true;
-    }
+//     if (is_stable(grid)) {
+//         return true;
+//     }
 
-    if (max_iter != nullptr) {
-        for (uint64_t i = 0; i < *max_iter; i++) {
+//     if (max_iter != nullptr) {
+//         for (uint64_t i = 0; i < *max_iter; i++) {
 
-            if (is_stable(grid)) {
-                break;
-            }
+//             if (is_stable(grid)) {
+//                 break;
+//             }
 
-            if (!simulate_step(grid)) {
-                return false;
-            }
-        }
-    }
+//             if (!simulate_step(grid)) {
+//                 return false;
+//             }
+//         }
+//     }
 
-    if (max_iter == nullptr) {
-        while (!is_stable(grid)) {
-            if (!simulate_step(grid)) {
-                return false;
-            }
-        }
-    }
+//     if (max_iter == nullptr) {
+//         while (!is_stable(grid)) {
+//             if (!simulate_step(grid)) {
+//                 return false;
+//             }
+//         }
+//     }
     
-    return true;
-}
+//     return true;
+// }
