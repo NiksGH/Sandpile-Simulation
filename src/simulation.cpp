@@ -1,5 +1,5 @@
 #include <cstdint>
-#include <limits>
+#include "grid.h"
 #include "simulation.h"
 
 //Безопасное прибавление беззнакового смещения к знаковой координате

@@ -1,3 +1,5 @@
+#include <cstdint>
+
 #include "parse.h"
 
 bool Equal(const char* s1,

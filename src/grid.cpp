@@ -1,6 +1,8 @@
-#include "grid.h"
+#include <cstdint>
 #include <new>
 #include <limits>
+
+#include "grid.h"
 
 bool InitializeGrid(Grid* grid, uint64_t width, uint64_t height, int64_t min_x, int64_t min_y) {
     if (grid == nullptr) {
@@ -15,7 +17,7 @@ bool InitializeGrid(Grid* grid, uint64_t width, uint64_t height, int64_t min_x, 
     try {
         grid->cells = new uint64_t[grid_size]{};
     }
-    catch (const std::bad_alloc& e) {
+    catch (const std::bad_alloc&) {
         return false;
     }
 
@@ -141,7 +143,7 @@ bool ExpandGrid(Grid* grid, int64_t new_min_x, int64_t new_min_y, uint64_t new_w
     try {
         new_grid = new uint64_t[new_grid_size]{};
     }
-    catch (const std::bad_alloc& e) {
+    catch (const std::bad_alloc&) {
         return false;
     }
 
