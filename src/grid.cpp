@@ -2,7 +2,7 @@
 #include <new>
 #include <limits>
 
-bool initialize_grid(Grid* grid, uint64_t width, uint64_t height, int64_t min_x, int64_t min_y) {
+bool InitializeGrid(Grid* grid, uint64_t width, uint64_t height, int64_t min_x, int64_t min_y) {
     if (grid == nullptr) {
         return false;
     }
@@ -27,7 +27,7 @@ bool initialize_grid(Grid* grid, uint64_t width, uint64_t height, int64_t min_x,
     return true;
 }
 
-void free_grid(Grid* grid) {
+void FreeGrid(Grid* grid) {
     if (grid == nullptr) {
         return;
     }
@@ -42,7 +42,7 @@ void free_grid(Grid* grid) {
 
 }
 
-bool get_cell(const Grid* grid, int64_t x, int64_t y, uint64_t* value) {
+bool GetCell(const Grid* grid, int64_t x, int64_t y, uint64_t* value) {
     if (grid == nullptr || value == nullptr || grid->cells == nullptr) {
         return false;
     }
@@ -60,7 +60,7 @@ bool get_cell(const Grid* grid, int64_t x, int64_t y, uint64_t* value) {
     return true;
 }
 
-bool set_cell(Grid* grid, int64_t x, int64_t y, uint64_t value) {
+bool SetCell(Grid* grid, int64_t x, int64_t y, uint64_t value) {
     if (grid == nullptr || grid->cells == nullptr) {
         return false;
     }
@@ -78,7 +78,7 @@ bool set_cell(Grid* grid, int64_t x, int64_t y, uint64_t value) {
     return true;
 }
 
-bool expand_grid(Grid* grid, int64_t new_min_x, int64_t new_min_y, uint64_t new_width, uint64_t new_height) {
+bool ExpandGrid(Grid* grid, int64_t new_min_x, int64_t new_min_y, uint64_t new_width, uint64_t new_height) {
 
     if (grid == nullptr || grid->cells == nullptr) {
         return false;

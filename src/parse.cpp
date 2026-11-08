@@ -1,6 +1,6 @@
 #include "parse.h"
 
-bool equal(const char* s1,
+bool Equal(const char* s1,
             const char* s2) {
 
     int i = 0;
@@ -13,7 +13,7 @@ bool equal(const char* s1,
     return s1[i] == s2[i];
 }
 
-uint64_t parse_uint64(const char* str, bool* success) {
+uint64_t ParseUint64(const char* str, bool* success) {
     if (success == nullptr) {
         return 0;
     }
@@ -46,7 +46,7 @@ uint64_t parse_uint64(const char* str, bool* success) {
 
 
 
-bool parse_arguments(int argc, char* argv[], Arguments* args) {
+bool ParseArguments(int argc, char* argv[], Arguments* args) {
     if (args == nullptr) {
         return false;
     }
@@ -63,7 +63,7 @@ bool parse_arguments(int argc, char* argv[], Arguments* args) {
     bool freq_flag = false;
 
     for (int i = 1; i < argc; i++) {
-        if (equal(argv[i], "--input") || equal(argv[i], "-i")) {
+        if (Equal(argv[i], "--input") || Equal(argv[i], "-i")) {
             if (i + 1 >= argc || input_flag || argv[i + 1][0] == '-') {
                 return false;
             }
@@ -71,7 +71,7 @@ bool parse_arguments(int argc, char* argv[], Arguments* args) {
             args->input_file = argv[++i];
             input_flag = true;
 
-        } else if (equal(argv[i], "--output") || equal(argv[i], "-o")) {
+        } else if (Equal(argv[i], "--output") || Equal(argv[i], "-o")) {
             if (i + 1 >= argc || output_flag || argv[i + 1][0] == '-') {
                 return false;
             }
@@ -79,13 +79,13 @@ bool parse_arguments(int argc, char* argv[], Arguments* args) {
             args->output_dir = argv[++i];
             output_flag = true;
 
-        } else if (equal(argv[i], "--max-iter") || equal(argv[i], "-m")) {
+        } else if (Equal(argv[i], "--max-iter") || Equal(argv[i], "-m")) {
             if (i + 1 >= argc || max_iter_flag || argv[i + 1][0] == '-') {
                 return false;
             }
 
             bool success;
-            uint64_t res = parse_uint64(argv[++i], &success);
+            uint64_t res = ParseUint64(argv[++i], &success);
 
             if (!success) {
                 return false;
@@ -95,13 +95,13 @@ bool parse_arguments(int argc, char* argv[], Arguments* args) {
             args->has_max_iter = true;
             max_iter_flag = true;
 
-        } else if (equal(argv[i], "--freq") || equal(argv[i], "-f")) {
+        } else if (Equal(argv[i], "--freq") || Equal(argv[i], "-f")) {
             if (i + 1 >= argc || freq_flag || argv[i + 1][0] == '-') {
                 return false;
             }
 
             bool success;
-            uint64_t res = parse_uint64(argv[++i], &success);
+            uint64_t res = ParseUint64(argv[++i], &success);
 
             if (!success) {
                 return false;

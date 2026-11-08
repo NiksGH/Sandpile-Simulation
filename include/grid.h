@@ -12,7 +12,7 @@ struct Grid {
     int64_t min_y;
 };
 
-bool initialize_grid(
+bool InitializeGrid(
     Grid* grid,
     uint64_t width,
     uint64_t height,
@@ -20,21 +20,21 @@ bool initialize_grid(
     int64_t min_y
 );
 
-void free_grid(Grid* grid);
+void FreeGrid(Grid* grid);
 
-bool get_cell(
+bool GetCell(
     const Grid* grid,
     int64_t x,
     int64_t y,
     uint64_t* value);
 
-bool set_cell(
+bool SetCell(
     Grid* grid,
     int64_t x,
     int64_t y,
     uint64_t value);
 
-bool expand_grid(
+bool ExpandGrid(
     Grid* grid,
     int64_t new_min_x,
     int64_t new_min_y,

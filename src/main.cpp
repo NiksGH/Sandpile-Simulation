@@ -7,11 +7,11 @@
 #include "simulation.h"
 #include "output.h"
 
-bool save_iteration(const char* output_dir, const Grid* grid, uint64_t iteration) {
+bool SaveIteration(const char* output_dir, const Grid* grid, uint64_t iteration) {
     char filename[25];
     char full_path[4096];
 
-    if (!make_filename(iteration, filename, sizeof(filename))) {
+    if (!MakeFilename(iteration, filename, sizeof(filename))) {
         return false;
     }
     uint64_t dir_lenght = 0;
@@ -51,13 +51,13 @@ bool save_iteration(const char* output_dir, const Grid* grid, uint64_t iteration
 
     full_path[position + filename_lenght] = '\0';
 
-    return save_bmp(full_path, grid);
+    return SaveBmp(full_path, grid);
 }
 
 int main(int argc, char* argv[]) {
     //Парсинг аргументов
     Arguments args{};
-    if (!parse_arguments(argc, argv, &args)) {
+    if (!ParseArguments(argc, argv, &args)) {
         std::cerr << "Error: invalid command line arguments\n";
         return 1;
     }
@@ -71,9 +71,9 @@ int main(int argc, char* argv[]) {
 
     //Чтение файла
     Grid grid{};
-    if (!read_input(args.input_file, &grid)) {
+    if (!ReadInput(args.input_file, &grid)) {
         std::cerr << "Error: failed to read inut file: " << args.input_file << '\n';
-        free_grid(&grid);
+        FreeGrid(&grid);
         return 1;
     }
 
@@ -81,8 +81,8 @@ int main(int argc, char* argv[]) {
     uint64_t last_saved = 0;
     bool has_saved = false;
 
-    while (!is_stable(&grid) && (!args.has_max_iter || iteration < args.max_iter)) {
-        if (!simulate_step(&grid)) {
+    while (!IsStable(&grid) && (!args.has_max_iter || iteration < args.max_iter)) {
+        if (!SimulateStep(&grid)) {
             std::cerr << "Error: simulation failed\n";
             return 1;
         }
@@ -90,9 +90,9 @@ int main(int argc, char* argv[]) {
         iteration++;
 
         if (args.freq != 0 && iteration % args.freq == 0) {
-            if (!save_iteration(args.output_dir, &grid, iteration)) {
+            if (!SaveIteration(args.output_dir, &grid, iteration)) {
                 std::cerr << "Error: failed to save BMP file\n";
-                free_grid(&grid);
+                FreeGrid(&grid);
                 return 1;
             }
 
@@ -102,14 +102,14 @@ int main(int argc, char* argv[]) {
     }
 
     if (!has_saved || last_saved != iteration) {
-        if (!save_iteration(args.output_dir, &grid, iteration)) {
+        if (!SaveIteration(args.output_dir, &grid, iteration)) {
             std::cerr << "Error: failed to save final BMP file\n";
-            free_grid(&grid);
+            FreeGrid(&grid);
             return 1;
         }
     }
 
-    free_grid(&grid);
+    FreeGrid(&grid);
     
     return 0;
 }

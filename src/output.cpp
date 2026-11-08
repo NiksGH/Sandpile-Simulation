@@ -1,45 +1,45 @@
 #include "output.h"
 
-void write_u16(std::ofstream& file, uint16_t value) {
+void WriteU16(std::ofstream& file, uint16_t value) {
     file.put(static_cast<char>(value & 0xFF));
     file.put(static_cast<char>((value >> 8) & 0xFF));
 }
 
-void write_u32(std::ofstream& file, uint32_t value) {
+void WriteU32(std::ofstream& file, uint32_t value) {
     file.put(static_cast<char>(value & 0xFF));
     file.put(static_cast<char>((value >> 8) & 0xFF));
     file.put(static_cast<char>((value >> 16) & 0xFF));
     file.put(static_cast<char>((value >> 24) & 0xFF));
 }
 
-void write_file_header(std::ofstream& file, uint32_t file_size) {
-    write_u16(file, 0x4D42);
-    write_u32(file, file_size);
-    write_u16(file, 0);
-    write_u16(file, 0);
-    write_u32(file, 118);
+void WriteFileHeader(std::ofstream& file, uint32_t file_size) {
+    WriteU16(file, 0x4D42);
+    WriteU32(file, file_size);
+    WriteU16(file, 0);
+    WriteU16(file, 0);
+    WriteU32(file, 118);
 }
 
-void write_info_header(std::ofstream& file, uint32_t width, uint32_t height, uint32_t image_size) {
-    write_u32(file, 40);
-    write_u32(file, width);
-    write_u32(file, height);
+void WriteInfoHeader(std::ofstream& file, uint32_t width, uint32_t height, uint32_t image_size) {
+    WriteU32(file, 40);
+    WriteU32(file, width);
+    WriteU32(file, height);
 
-    write_u16(file, 1);
-    write_u16(file, 4);
+    WriteU16(file, 1);
+    WriteU16(file, 4);
 
-    write_u32(file, 0);
-    write_u32(file, image_size);
+    WriteU32(file, 0);
+    WriteU32(file, image_size);
 
-    write_u32(file, 2835);
-    write_u32(file, 2835);
+    WriteU32(file, 2835);
+    WriteU32(file, 2835);
 
-    write_u32(file, 16);
-    write_u32(file, 0);
+    WriteU32(file, 16);
+    WriteU32(file, 0);
 }
 
 
-void write_palette(std::ofstream& file) {
+void WritePalette(std::ofstream& file) {
     //Black
     file.put(0);
     file.put(0);
@@ -73,7 +73,7 @@ void write_palette(std::ofstream& file) {
     }
 }
 
-uint8_t get_color_number(uint64_t sand_count) {
+uint8_t GetColorNumber(uint64_t sand_count) {
     if (sand_count >= 4) {
         return 4;
     }
@@ -81,7 +81,7 @@ uint8_t get_color_number(uint64_t sand_count) {
     return static_cast<uint8_t>(sand_count);
 }
 
-uint64_t calculate_row_size(uint64_t width) {
+uint64_t CalculateRowSize(uint64_t width) {
     uint64_t bytes_per_row = (width + 1) / 2;
 
     while (bytes_per_row % 4 != 0) {
@@ -91,21 +91,21 @@ uint64_t calculate_row_size(uint64_t width) {
     return bytes_per_row;
 }
 
-bool write_pixel_data(std::ofstream& file, const Grid* grid) {
+bool WritePixelData(std::ofstream& file, const Grid* grid) {
     if (grid == nullptr || grid->cells == nullptr) {
         return false;
     }
 
-    uint64_t row_size = calculate_row_size(grid->width);
+    uint64_t row_size = CalculateRowSize(grid->width);
 
     for (int64_t y = static_cast<int64_t>(grid->height) - 1; y >= 0; y--) {
         for (uint64_t x = 0; x < grid->width; x += 2) {
-            uint8_t first_pixel = get_color_number(grid->cells[y * grid->width + x]);
+            uint8_t first_pixel = GetColorNumber(grid->cells[y * grid->width + x]);
 
             uint8_t second_pixel = 0;
 
             if (x + 1 < grid->width) {
-                second_pixel = get_color_number(grid->cells[y * grid->width + x + 1]);
+                second_pixel = GetColorNumber(grid->cells[y * grid->width + x + 1]);
             }
 
             uint8_t pixel_byte = (first_pixel << 4) | second_pixel;
@@ -124,7 +124,7 @@ bool write_pixel_data(std::ofstream& file, const Grid* grid) {
     return file.good();
 }
 
-bool save_bmp(const char* filename, const Grid* grid) {
+bool SaveBmp(const char* filename, const Grid* grid) {
     //Подсчет параметров файла
     if (grid == nullptr || grid->cells == nullptr || filename == nullptr) {
         return false;
@@ -135,7 +135,7 @@ bool save_bmp(const char* filename, const Grid* grid) {
     if (grid->width > UINT32_MAX || grid->height > UINT32_MAX) {
         return false;
     }
-    uint64_t row_size = calculate_row_size(grid->width);
+    uint64_t row_size = CalculateRowSize(grid->width);
     if (grid->height != 0 && row_size > UINT64_MAX / grid->height) {
         return false;
     }
@@ -152,13 +152,13 @@ bool save_bmp(const char* filename, const Grid* grid) {
     }
 
     //Запись файла
-    write_file_header(file, static_cast<uint32_t>(file_size));
-    write_info_header(file, static_cast<uint32_t>(grid->width), static_cast<uint32_t>(grid->height), static_cast<uint32_t>(image_size));
-    write_palette(file);
+    WriteFileHeader(file, static_cast<uint32_t>(file_size));
+    WriteInfoHeader(file, static_cast<uint32_t>(grid->width), static_cast<uint32_t>(grid->height), static_cast<uint32_t>(image_size));
+    WritePalette(file);
     if (!file.good()) {
         return false;
     }
-    if (!write_pixel_data(file, grid)) {
+    if (!WritePixelData(file, grid)) {
         return false;
     }
     file.close();
@@ -168,7 +168,7 @@ bool save_bmp(const char* filename, const Grid* grid) {
     return true;
 }
 
-bool make_filename(uint64_t itteration, char* buffer, uint64_t buffer_size) {
+bool MakeFilename(uint64_t itteration, char* buffer, uint64_t buffer_size) {
     if (buffer == nullptr || buffer_size < 5) {
         return false;
     }

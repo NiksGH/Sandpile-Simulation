@@ -12,6 +12,6 @@ struct Arguments {
     bool has_max_iter;
 };
 
-bool equal(const char* s1, const char* s2);
+bool Equal(const char* s1, const char* s2);
 
-bool parse_arguments(int argc, char* argv[], Arguments* args);
+bool ParseArguments(int argc, char* argv[], Arguments* args);

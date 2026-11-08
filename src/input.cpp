@@ -3,7 +3,7 @@
 #include "grid.h"
 
 
-bool read_input(const char* filename, Grid* grid) {
+bool ReadInput(const char* filename, Grid* grid) {
     std::ifstream file(filename);
 
     if (!file.is_open()) {
@@ -48,7 +48,7 @@ bool read_input(const char* filename, Grid* grid) {
     uint64_t height = static_cast<uint64_t>(max_y) - static_cast<uint64_t>(min_y) + 1;
 
     //Инициализируем сетку
-    if (!initialize_grid(grid, width, height, min_x, min_y)) {
+    if (!InitializeGrid(grid, width, height, min_x, min_y)) {
         return false;
     }
 
@@ -56,15 +56,15 @@ bool read_input(const char* filename, Grid* grid) {
     file.open(filename);
 
     if (!file.is_open()) {
-        free_grid(grid);
+        FreeGrid(grid);
         return false;
     }
 
     //Заполняем сетку
     has_data = false;
     while (file >> x >> y >> sand_count) {
-        if (!set_cell(grid, x, y, sand_count)) {
-            free_grid(grid);
+        if (!SetCell(grid, x, y, sand_count)) {
+            FreeGrid(grid);
             return false;
         }
     }

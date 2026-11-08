@@ -1,3 +1,3 @@
 #include <grid.h>
 
-bool read_input(const char* filename, Grid* grid);
+bool ReadInput(const char* filename, Grid* grid);
