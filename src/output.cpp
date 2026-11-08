@@ -1,3 +1,8 @@
+#include <cstdint>
+#include <fstream>
+#include <ios>
+
+#include "grid.h"
 #include "output.h"
 
 void WriteU16(std::ofstream& file, uint16_t value) {
