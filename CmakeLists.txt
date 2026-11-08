@@ -11,7 +11,7 @@ add_executable(SandPile
     src/simulation.cpp
     src/input.cpp
     src/output.cpp
-    src/parce.cpp
+    src/parse.cpp
 )
 
 target_include_directories(SandPile PRIVATE include)
