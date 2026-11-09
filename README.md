@@ -1,151 +1,180 @@
-# Лабораторная работа 3
+# Sandpile Simulation
 
-## Задача
+A C++ implementation of the **Abelian Sandpile Model** (Bak–Tang–Wiesenfeld model).
 
-Реализовать упрощённую [модель песчаной кучи](https://en.wikipedia.org/wiki/Abelian_sandpile_model) с сохранением состояний в виде изображений в [формате BMP](https://en.wikipedia.org/wiki/BMP_file_format).
+The program simulates the evolution of a two-dimensional sandpile grid. When a cell accumulates four or more grains, it topples and distributes grains to its four orthogonal neighbors.
 
-Начальное состояние задаётся входным файлом. Размер сетки может изменяться в процессе работы программы.
+The simulation continues until the grid reaches a stable state or the specified iteration limit is reached.
 
-## Инструкция по выполнению
+## Features
 
-Требуется реализовать консольное приложение, которое считывает начальное состояние, пересчитывает состояние модели и сохраняет изображения с заданной частотой.
+- Two-dimensional sandpile simulation.
+- Dynamic grid expansion.
+- Configurable maximum number of iterations.
+- Periodic BMP image generation.
+- TSV input file support.
+- Short and long command-line argument formats.
+- Manual BMP file generation without external image libraries.
+- Memory management and integer overflow checks.
 
-### Аргументы командной строки
+## Requirements
 
-| Короткая форма | Длинная форма | Описание | По умолчанию |
-|---------------|---------------|----------|--------------|
-| `-i` | `--input` | [TSV-файл](https://en.wikipedia.org/wiki/Tab-separated_values) (tab-separated values) с начальными данными. | Обязательный аргумент. |
-| `-o` | `--output` | Путь к директории для сохранения изображений. Если директория не существует, программа должна её создать. | Обязательный аргумент. |
-| `-m` | `--max-iter` | Максимальное количество итераций модели. При значении `0` итерации не выполняются, а начальное состояние сохраняется как итоговое. | До стабилизации модели. |
-| `-f` | `--freq` | Частота сохранения изображений: количество итераций между сохранениями. | `0` — сохраняется только последнее состояние. |
+- C++ compiler with C++17 support.
+- CMake 3.15 or newer.
 
-Значения `--max-iter` и `--freq` должны быть целыми неотрицательными числами. При неизвестном аргументе, отсутствии обязательного аргумента или некорректном значении программа должна завершиться с сообщением об ошибке и ненулевым кодом возврата.
+## Building
 
-### Начальное состояние
+Clone the repository:
 
-Входной файл содержит количество песчинок в каждой непустой ячейке. Начальный размер сетки определяется этими данными: сетка должна быть минимальным прямоугольником, содержащим все указанные ячейки.
+```bash
+git clone https://github.com/NiksGH/Sandpile-Simulation.git
+cd Sandpile-Simulation
+```
 
-Каждая строка содержит информацию об одной ячейке: координату `x`, координату `y` и количество песчинок. Значения разделены символом табуляции.
+Configure the project:
 
-Гарантируется, что координаты помещаются в `int16_t`, а количество песчинок — в `uint64_t`.
+```bash
+cmake -S . -B build
+```
 
-### Примеры входных данных
+Build the executable:
 
-Готовые TSV-файлы находятся в директории [input](input). Путь к выбранному файлу передаётся аргументом `--input`.
+```bash
+cmake --build build
+```
 
-| Файл | Начальный размер сетки | Описание |
-|------|-----------------------|----------|
-| [stable.tsv](input/stable.tsv) | 2 × 2 | Стабильное состояние: итерации не требуются. |
-| [single-pile.tsv](input/single-pile.tsv) | 1 × 1 | Куча из четырёх песчинок. За одну итерацию сетка расширяется до 3 × 3 и достигает стабильного состояния. |
-| [multiple-piles.tsv](input/multiple-piles.tsv) | 5 × 3 | Несколько куч с положительными и отрицательными координатами. |
+The executable is named `SandPile.exe` on Windows.
 
-Более крупные примеры позволяют получить узоры, подобные [иллюстрации модели на бесконечной сетке в Википедии](https://en.wikipedia.org/wiki/Abelian_sandpile_model#Sandpile_models_on_infinite_grids):
+## Usage
 
-| Файл | Начальное состояние | Итоговый размер сетки | Итераций до стабилизации |
-|------|---------------------|----------------------|-------------------------|
-| [fractal.tsv](input/fractal.tsv) | 65 536 песчинок в точке `(0, 0)`. | 189 × 189 | 62 118 |
-| [twin-piles.tsv](input/twin-piles.tsv) | Две кучи по 32 768 песчинок в точках `(-48, 0)` и `(48, 0)`. | 233 × 143 | 31 148 |
-| [four-piles.tsv](input/four-piles.tsv) | Четыре кучи по 16 384 песчинки в углах квадрата с координатами `x, y ∈ {-40, 40}`. | 181 × 181 | 16 460 |
-| [square.tsv](input/square.tsv) | Квадрат 65 × 65: по 6 песчинок в каждой ячейке, координаты от `-32` до `32` по обеим осям. | 113 × 113 | 3 165 |
+Example:
 
-Чтобы получить законченный узор, не задавайте `--max-iter`. При `--freq 0` программа сохранит только итоговое изображение.
+```bash
+./SandPile.exe --input input.tsv --output output.bmp --max-iter 1000 --freq 100
+```
 
-### Правила модели
+### Command-line arguments
 
-1. Новые песчинки добавляются только при инициализации.
+| Short option | Long option | Description |
+|---|---|---|
+| `-i` | `--input` | Path to the input TSV file |
+| `-o` | `--output` | Path to the output BMP file |
+| `-m` | `--max-iter` | Maximum number of simulation iterations |
+| `-f` | `--freq` | Frequency of BMP image generation |
 
-2. За одну итерацию каждая ячейка, в которой в начале итерации было не менее 4 песчинок, обваливается ровно один раз: теряет 4 песчинки и передаёт по одной соседям сверху, снизу, слева и справа.
+Both short and long argument formats are supported.
 
-3. Состояние сетки после итерации зависит только от её состояния в начале итерации. Песчинки, полученные от соседей в течение итерации, учитываются при определении обвалов только на следующей итерации.
+### Simulation parameters
 
-4. Если при обвале песчинки выходят за границу сетки, её размер увеличивается в соответствующую сторону.
+**Maximum iterations (`--max-iter`)**
 
-5. Состояние модели считается стабильным, если в каждой ячейке находится менее 4 песчинок.
+Sets the maximum number of simulation iterations. If omitted, the simulation continues until the sandpile reaches a stable state.
 
-Программа должна завершить работу, если модель достигла стабильного состояния либо выполнено максимальное количество итераций, заданное аргументом `--max-iter`.
+**Output frequency (`--freq`)**
 
-### Сохранение состояний
+Controls how often BMP images are saved during the simulation.
 
-Нумерация итераций начинается с 1. При `freq > 0` изображения сохраняются после итераций `freq`, `2 * freq`, `3 * freq` и так далее.
+- `--freq 0` — saves only the final state.
+- `--freq N` — saves the simulation state every N iterations.
 
-Последнее состояние сохраняется всегда, в том числе при остановке между очередными сохранениями. Если оно уже сохранено на последней выполненной итерации, повторное сохранение не требуется. При `freq = 0` сохраняется только последнее состояние.
+By default, only the final state is saved after the simulation finishes.
 
-Начальное состояние отдельно не сохраняется. Если программа не выполнила ни одной итерации, начальное состояние является последним и должно быть сохранено.
+## Input Format
 
-### Формат изображений
+The input file uses the TSV (Tab-Separated Values) format.
 
-Изображение текущего состояния сохраняется в формате BMP по следующим правилам:
+Each line contains three values:
 
-1. Размер изображения равен размеру сетки.
+```text
+x    y    sand_count
+```
 
-2. Каждый пиксель соответствует одной ячейке сетки.
+Where:
 
-3. Цвет пикселя зависит от количества песчинок в ячейке.
+- `x` — horizontal coordinate.
+- `y` — vertical coordinate.
+- `sand_count` — initial number of sand grains in the cell.
 
-   - 0 — чёрный;
-   - 1 — зелёный;
-   - 2 — фиолетовый;
-   - 3 — жёлтый;
-   - более 3 — белый.
+Example:
 
-4. На кодирование одного пикселя должно отводиться не более 4 бит.
+```text
+0    0    10
+1    0    5
+0    1    3
+2    2    8
+```
 
-### Сборка
+## Simulation Rules
 
-Структуру проекта и организацию сборки необходимо разработать самостоятельно.
+The model follows the standard sandpile toppling rule.
 
-Для сборки необходимо использовать CMake.
+Whenever a cell contains four or more grains, it distributes four grains to its orthogonal neighbors:
 
+- One grain to the cell above.
+- One grain to the cell below.
+- One grain to the cell on the left.
+- One grain to the cell on the right.
 
-## Ограничения
+The process continues until the grid becomes stable or the iteration limit is reached.
 
-Ограничения относятся к реализации приложения. В собственных тестах разрешены GoogleTest и средства стандартной библиотеки.
+The grid expands dynamically when sand spreads beyond its current boundaries.
 
-1. Использование сторонних библиотек запрещено. Функции для работы с изображениями в формате BMP необходимо спроектировать и реализовать самостоятельно.
+## Output
 
-2. Запрещено использовать средства стандартной библиотеки, описанные в следующих разделах cppreference:
+The program generates BMP images representing the current state of the sandpile.
 
-   - [Containers library](https://en.cppreference.com/cpp/container).
-   - [String classes (std::string etc.)](https://en.cppreference.com/cpp/string#String_classes_.28std::string_etc..29).
-   - [Smart pointers (since C++11)](https://en.cppreference.com/cpp/memory#Smart_pointers_.28since_C.2B.2B11.29).
-   - [Allocators](https://en.cppreference.com/cpp/memory#Allocators).
-   - [Memory resources (since C++17)](https://en.cppreference.com/cpp/memory#Memory_resources_.28since_C.2B.2B17.29).
-   - [C-style memory management](https://en.cppreference.com/cpp/memory#C-style_memory_management).
-   - [String I/O implementation](https://en.cppreference.com/cpp/io#String_I.2FO_implementation).
-   - [Numeric arrays](https://en.cppreference.com/cpp/numeric#Numeric_arrays).
+Each cell is assigned a color based on its number of grains:
 
-3. Память для хранения сетки должна выделяться динамически. Выделение и освобождение памяти необходимо выполнять самостоятельно. Изменение размеров хранилища также необходимо реализовать самостоятельно. Использование массива заранее заданного максимального размера для хранения сетки запрещено.
+| Sand grains | Color |
+|---|---|
+| 0 | Black |
+| 1 | Green |
+| 2 | Purple |
+| 3 | Yellow |
+| More than 3 | White |
 
+Intermediate states can be saved by configuring the output frequency with `--freq`.
 
-## Примечание
+## Project Structure
 
-1. Для работы с файловой системой может пригодиться [std::filesystem](https://en.cppreference.com/w/cpp/filesystem).
-2. При записи BMP учитывайте размеры полей, порядок байтов и выравнивание строк изображения. Представление структуры в памяти не обязано совпадать с представлением данных в файле.
-3. Перед сдачей рекомендуется запустить приложение с [AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) и [UndefinedBehaviorSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html), проверить отсутствие утечек памяти с помощью [LeakSanitizer](https://clang.llvm.org/docs/LeakSanitizer.html) и исправить найденные ошибки.
-4. Готовые тесты не предоставляются. При желании можно написать собственные. CI проверяет сборку и стиль кода.
+```text
+Sandpile-Simulation/
+├── include/          # Header files
+├── src/              # Source files
+├── input/            # Input TSV files
+├── CMakeLists.txt    # CMake configuration
+└── README.md
+```
 
-## ТеорМин
+## Implementation Details
 
-1. Виртуальное адресное пространство
-2. Сегменты памяти программы. Стек и куча
-3. Стек вызовов. Длительность хранения и время жизни объектов
-4. Динамическая память: `malloc`, `calloc`, `realloc`, `free`, `new`, `delete`, `new[]` и `delete[]`
-5. Placement new
-6. Ошибки работы с памятью.
-7. Ссылки и константные ссылки. Отличия от указателей
-8. Передача аргументов и возврат значений. Время жизни временных объектов
-9. Перегрузка функций.
-10. Аргументы функций по умолчанию
-11. Инициализация и присваивание. Виды инициализации
+The project is implemented in C++ and includes:
 
+- Dynamic memory allocation and manual resource management.
+- Grid expansion and coordinate handling.
+- Sandpile simulation and state transitions.
+- Binary BMP file generation.
+- Input validation and error handling.
+- Integer overflow protection.
 
-## Deadline
+## Visualization Examples
 
-| deadline | submission period | coeff | branch |
-|----------|:-----------------:|-------|------------|
-| 0 | до 09.11.2026 23:59 включительно | 1.0 | deadline_0 |
-| 1 | 10.11.2026 00:00 — 16.11.2026 23:59 | 0.85 | deadline_1 |
-| 2 | 17.11.2026 00:00 — 23.11.2026 23:59 | 0.65 | deadline_2 |
-| 3 | с 24.11.2026 00:00 | 0.5 | deadline_3 |
+### Initial State
 
-Максимальное количество баллов - 12
+![Initial State](assets/initial-state.png)
+
+### Intermediate State
+
+![Intermediate State](assets/intermediate-state.png)
+
+### Final State
+
+![Final State](assets/final-state.png)
+
+## Repository
+
+GitHub: https://github.com/NiksGH/Sandpile-Simulation
+
+## License
+
+This project is intended for educational and portfolio purposes.
